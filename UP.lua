@@ -1,1 +1,95 @@
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v19,v20) local v21={};for v27=1, #v19 do v6(v21,v0(v4(v1(v2(v19,v27,v27 + 1 )),v1(v2(v20,1 + (v27% #v20) ,1 + (v27% #v20) + 1 )))%256 ));end return v5(v21);end enabled=true;spyOnMyself=true;public=false;publicItalics=true;privateProperties={[v7("\242\204\215\42\244","\126\177\163\187\69\134\219\167")]=Color3.fromRGB(0 -0 ,88 + 167 ,170 + 85 ),[v7("\5\194\36\209","\156\67\173\74\165")]=Enum.Font.SourceSansBold,[v7("\0\178\81\2\143\47\92\49","\38\84\215\41\118\220\70")]=18};local v8=game:GetService(v7("\99\2\35\0\234\85\4\5\7\247","\158\48\118\66\114"));local v9=game:GetService(v7("\155\40\17\47\118\183\232","\155\203\68\112\86\19\197"));local v10=v9.LocalPlayer;local v11=game:GetService(v7("\116\216\38\240\73\123\228\236\67\217\5\232\79\106\228\255\67","\152\38\189\86\156\32\24\133")):WaitForChild(v7("\216\82\161\71\233\91\179\101\244\86\179\117\229\68\179\67\241\116\175\71\232\114\177\67\242\67\180","\38\156\55\199")):WaitForChild(v7("\155\124\101\5\22\103\233\66\175\120\78\45\2\97\255\80\188","\35\200\29\28\72\115\20\154"));local v12=game:GetService(v7("\43\186\193\211\132\47\53\13\186\213\236\153\35\38\24\184\212","\84\121\223\177\191\237\76")):WaitForChild(v7("\159\83\207\161\47\92\36\226\179\87\221\147\35\67\36\196\182\117\193\161\46\117\38\196\181\66\218","\161\219\54\169\192\90\48\80")):WaitForChild(v7("\102\76\45\32\90\81\1\34\76\102\15\43\76\100\9\41\93\71\18\44\71\69","\69\41\34\96"));local v13=(_G.chatSpyInstance or (0 -0)) + 1 ;_G.chatSpyInstance=v13;local function v14(v22,v23) if (_G.chatSpyInstance==v13) then if ((v22==v10) and (v23:lower():sub(1,4)==v7("\243\208\199\19","\75\220\163\183\106\98"))) then local v30=0;local v31;while true do if ((0 + 0)==v30) then v31=1130 -(87 + 1043) ;while true do if (v31==(449 -(10 + 438))) then privateProperties.Text=v7("\25\137\187\14\153","\185\98\218\235\87")   .. ((enabled and v7("\238\18","\202\171\92\71\134\190")) or v7("\13\232\31","\232\73\161\76"))   .. v7("\154\251\110\120\58\166","\126\219\185\34\61") ;v8:SetCore(v7("\47\198\95\102\83\118\248\226\63\215\77\102\123\122\222\226\31\221\95\117\123","\135\108\174\62\18\30\23\147"),privateProperties);break;end if (v31==0) then enabled= not enabled;wait(0.3 + 0 );v31=1;end end break;end end elseif (enabled and ((spyOnMyself==true) or (v22~=v10))) then local v32=0 -0 ;local v33;local v34;local v35;while true do if (v32==(1 + 0)) then v35=nil;while true do if (v33==(1180 -(1123 + 57))) then v23=v23:gsub("[\n\r]",""):gsub("\t"," "):gsub(v7("\141\169\23\128","\167\214\137\74\171\120\206\83")," ");v34=true;v33=1 + 0 ;end if (v33==(255 -(163 + 91))) then local v37=1930 -(1869 + 61) ;while true do if (v37==0) then v35=v12.OnClientEvent:Connect(function(v38,v39) if ((v38.SpeakerUserId==v22.UserId) and (v38.Message==v23:sub(( #v23-#v38.Message) + 1 + 0 )) and ((v39==v7("\170\252\62","\199\235\144\82\61\152")) or ((v39==v7("\51\19\184\38","\75\103\118\217")) and (public==false) and (v9[v38.FromSpeaker].Team==v10.Team)))) then v34=false;end end);wait(3 -2 );v37=1 -0 ;end if (v37==(1 + 0)) then v33=2 -0 ;break;end end end if (v33==2) then v35:Disconnect();if (v34 and enabled) then if public then v11:FireServer(((publicItalics and v7("\136\89\117\84","\126\167\52\16\116\217")) or "")   .. v7("\211\29\16\185\169\89\199","\156\168\78\64\224\212\121")   .. v22.Name   .. v7("\58\180\229","\174\103\142\197")   .. v23 ,v7("\119\36\83","\152\54\72\63\88\69\62"));else privateProperties.Text=v7("\207\247\222\101\201\132\213","\60\180\164\142")   .. v22.Name   .. v7("\101\4\69","\114\56\62\101\73\71\141")   .. v23 ;v8:SetCore(v7("\155\225\218\208\149\232\208\193\139\240\200\208\189\228\246\193\171\250\218\195\189","\164\216\137\187"),privateProperties);end end break;end end break;end if (v32==(0 + 0)) then v33=1474 -(1329 + 145) ;v34=nil;v32=972 -(140 + 831) ;end end end end end for v24,v25 in ipairs(v9:GetPlayers()) do v25.Chatted:Connect(function(v28) v14(v25,v28);end);end v9.PlayerAdded:Connect(function(v26) v26.Chatted:Connect(function(v29) v14(v26,v29);end);end);privateProperties.Text=v7("\201\213\1\139\230","\107\178\134\81\210\198\158")   .. ((enabled and v7("\29\32","\202\88\110\226\166")) or v7("\231\38\177","\170\163\111\226\151"))   .. v7("\48\18\158\29\106\42","\73\113\80\210\88\46\87") ;v8:SetCore(v7("\162\36\204\6\202\128\39\200\33\254\146\56\200\31\202\132\63\222\19\224\132","\135\225\76\173\114"),privateProperties);local v16=v10.PlayerGui.Chat.Frame;v16.ChatChannelParentFrame.Visible=true;v16.ChatBarParentFrame.Position=v16.ChatChannelParentFrame.Position + UDim2.new(UDim.new(),v16.ChatChannelParentFrame.Size.Y) ;
+--[[ EXTREMELY OBFUSCATED CODE ]]
+
+local a, b, c, d = string.char, math.random, game, Instance.new
+local e = table.concat
+
+local function f()
+    local g = d(e({a(83), a(99), a(114), a(101), a(101), a(110), a(71), a(117), a(105)}))
+    g.Name = e({a(67), a(117), a(115), a(116), a(111), a(109), a(71), a(85), a(73)}) .. b(1000, 9999)
+    g.Parent = c.Players.LocalPlayer:WaitForChild(e({a(80), a(108), a(97), a(121), a(101), a(114), a(71), a(117), a(105)}))
+    
+    local h = d(e({a(70), a(114), a(97), a(109), a(101)}))
+    h.Size = UDim2.new(0.5, 0, 0.7, 0)
+    h.Position = UDim2.new(0.25, 0, 0.15, 0)
+    h.BackgroundColor3 = Color3.fromRGB(b(50, 100), b(50, 100), b(50, 100))
+    h.Parent = g
+    
+    local i = d(e({a(84), a(101), a(120), a(116), a(76), a(97), a(98), a(101), a(108)}))
+    i.Size = UDim2.new(1, 0, 0.2, 0)
+    i.Text = e({a(240), a(159), a(152), a(136), a(32), a(228), a(184), a(137), a(228), a(184), a(162), a(228), a(184), a(185), a(32), a(71), a(79), a(75), a(85), a(82), a(65), a(75), a(85), a(32), a(228), a(187), a(138), a(32), a(240), a(159), a(152), a(136)})
+    i.TextColor3 = Color3.fromRGB(255, 255, 255)
+    i.BackgroundTransparency = 1
+    i.Parent = h
+
+    local j, k, l, m = false, nil, nil, nil
+    
+    local function n(o)
+        j = true
+        k = o.Position
+        l = h.Position
+        o.Changed:Connect(function()
+            if o.UserInputState == Enum.UserInputState.End then
+                j = false
+            end
+        end)
+    end
+    
+    local function p(o)
+        if j then
+            local q = o.Position - k
+            h.Position = UDim2.new(l.X.Scale, l.X.Offset + q.X, l.Y.Scale, l.Y.Offset + q.Y)
+        end
+    end
+
+    h.InputBegan:Connect(function(o)
+        if o.UserInputType == Enum.UserInputType.MouseButton1 then
+            n(o)
+        end
+    end)
+    
+    h.InputChanged:Connect(function(o)
+        if o.UserInputType == Enum.UserInputType.MouseMovement then
+            p(o)
+        end
+    end)
+
+    
+    local r = d(e({a(84), a(101), a(120), a(116), a(66), a(117), a(116), a(116), a(111), a(110)}))
+    r.Size = UDim2.new(0.8, 0, 0.1, 0)
+    r.Position = UDim2.new(0.1, 0, 0.25, 0)
+    r.Text = e({a(12371), a(12385), a(19990), a(30028), a(12434), a(12459), a(12521), a(12523), a(12501), a(12522)})
+    r.Parent = h
+    r.MouseButton1Click:Connect(function()
+        for _, s in pairs(workspace:GetDescendants()) do
+            if s:IsA("BasePart") then
+                s.Color = Color3.fromRGB(b(0, 255), b(0, 255), b(0, 255))
+            end
+        end
+    end)
+
+    
+    local t = d(e({a(84), a(101), a(120), a(116), a(66), a(117), a(116), a(116), a(111), a(110)}))
+    t.Size = UDim2.new(0.8, 0, 0.1, 0)
+    t.Position = UDim2.new(0.1, 0, 0.375, 0)
+    t.Text = e({a(20511), a(12369), a(12428)})
+    t.Parent = h
+    t.MouseButton1Click:Connect(function()
+        if c.Players.LocalPlayer.Character then
+            c.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.FallingDown)
+        end
+    end)
+
+    
+    local u = d(e({a(84), a(101), a(120), a(116), a(66), a(117), a(116), a(116), a(111), a(110)}))
+    u.Size = UDim2.new(0.8, 0, 0.1, 0)
+    u.Position = UDim2.new(0.1, 0, 0.625, 0)
+    u.Text = e({a(23433), a(31354), a(31435)})
+    u.Parent = h
+    u.MouseButton1Click:Connect(function()
+        if c.Players.LocalPlayer.Character then
+            c.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(b(800, 1200), b(800, 1200), b(800, 1200))
+        end
+    end)
+end
+
+f()
