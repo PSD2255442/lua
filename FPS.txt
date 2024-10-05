@@ -1,0 +1,162 @@
+-- 対象のゲームIDを確認
+if game.PlaceId == 18695865484 then
+    -- GUI作成
+    local ScreenGui = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local TextBox = Instance.new("TextBox")
+    local SetButton = Instance.new("TextButton")
+    local ResetButton = Instance.new("TextButton")
+    local AutoButton = Instance.new("TextButton")
+    local WaitTextBox = Instance.new("TextBox")
+    local FPSTextLabel = Instance.new("TextLabel") -- FPSラベルを追加
+    local WaitTextLabel = Instance.new("TextLabel") -- wait()ラベルを追加
+
+    -- GUIの親を設定 (Executorの環境によってはCoreGuiに設定)
+    ScreenGui.Parent = game:GetService("CoreGui") -- CoreGuiに設定することで、PC・モバイルどちらでも動作します
+
+    -- GUIのプロパティ設定
+    Frame.Parent = ScreenGui
+    Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Frame.Position = UDim2.new(0.3, 0, 0.3, 0)
+    Frame.Size = UDim2.new(0, 220, 0, 240) -- フレームのサイズを大きくする
+
+    -- FPSラベル設定
+    FPSTextLabel.Parent = Frame
+    FPSTextLabel.Text = "FPS"
+    FPSTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FPSTextLabel.BackgroundTransparency = 1
+    FPSTextLabel.Position = UDim2.new(0.1, 0, 0.05, 0) -- FPSラベルの位置を設定
+    FPSTextLabel.Size = UDim2.new(0, 180, 0, 20)
+
+    -- FPS入力ボックス設定
+    TextBox.Parent = Frame
+    TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox.Position = UDim2.new(0.1, 0, 0.15, 0) -- 位置を調整して埋もれないようにする
+    TextBox.Size = UDim2.new(0, 180, 0, 30)
+    TextBox.PlaceholderText = "FPSを入力してください"
+    TextBox.Text = ""
+
+    -- wait()ラベル設定
+    WaitTextLabel.Parent = Frame
+    WaitTextLabel.Text = "繰り返すスピード (wait)"
+    WaitTextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    WaitTextLabel.BackgroundTransparency = 1
+    WaitTextLabel.Position = UDim2.new(0.1, 0, 0.35, 0) -- WaitTextBoxの上に表示するラベルの位置を設定
+    WaitTextLabel.Size = UDim2.new(0, 180, 0, 20)
+
+    -- wait()入力ボックス設定
+    WaitTextBox.Parent = Frame
+    WaitTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    WaitTextBox.Position = UDim2.new(0.1, 0, 0.45, 0) -- WaitTextBoxの位置を少し下げる
+    WaitTextBox.Size = UDim2.new(0, 180, 0, 30)
+    WaitTextBox.PlaceholderText = "wait()時間を入力"
+    WaitTextBox.Text = "1" -- デフォルトは1秒
+
+    -- ボタン設定
+    SetButton.Parent = Frame
+    SetButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+    SetButton.Position = UDim2.new(0.1, 0, 0.6, 0) -- ボタンの位置を調整
+    SetButton.Size = UDim2.new(0, 180, 0, 30)
+    SetButton.Text = "FPS設定"
+
+    AutoButton.Parent = Frame
+    AutoButton.BackgroundColor3 = Color3.fromRGB(0, 0, 170)
+    AutoButton.Position = UDim2.new(0.1, 0, 0.75, 0) -- 自動設定ボタンの位置を調整
+    AutoButton.Size = UDim2.new(0, 180, 0, 30)
+    AutoButton.Text = "自動FPS設定"
+
+    ResetButton.Parent = Frame
+    ResetButton.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+    ResetButton.Position = UDim2.new(0.1, 0, 0.9, 0) -- リセットボタンの位置を調整
+    ResetButton.Size = UDim2.new(0, 180, 0, 30)
+    ResetButton.Text = "FPSリセット"
+
+    -- FPSを変更する変数
+    local defaultFPS = 60 -- デフォルトのFPS
+    local autoFPS = 100 -- 自動で設定するFPS
+
+    -- ループを制御するための変数
+    local running = false
+
+    -- FPS設定機能
+    SetButton.MouseButton1Click:Connect(function()
+        local fpsValue = tonumber(TextBox.Text) -- 入力されたFPSの値を取得
+        local waitTime = tonumber(WaitTextBox.Text) or 1 -- 入力されたwait()の値を取得（デフォルト1秒）
+        
+        if fpsValue then
+            running = true
+            while running do
+                wait(waitTime)
+                local args = {
+                    [1] = fpsValue
+                }
+                game:GetService("ReplicatedStorage").FPSUpdateEventIKnowYouReCheater:FireServer(unpack(args))
+            end
+        else
+            warn("有効な数値を入力してください")
+        end
+    end)
+
+    -- 自動FPS設定機能
+    AutoButton.MouseButton1Click:Connect(function()
+        local waitTime = tonumber(WaitTextBox.Text) or 1 -- 入力されたwait()の値を取得（デフォルト1秒）
+        
+        running = true
+        while running do
+            wait(waitTime)
+            local args = {
+                [1] = autoFPS
+            }
+            game:GetService("ReplicatedStorage").FPSUpdateEventIKnowYouReCheater:FireServer(unpack(args))
+        end
+    end)
+
+    -- FPSリセット機能
+    ResetButton.MouseButton1Click:Connect(function()
+        running = false -- ループを停止
+        wait(0.1) -- ループが完全に終了するまで少し待つ
+        local args = {
+            [1] = defaultFPS
+        }
+        game:GetService("ReplicatedStorage").FPSUpdateEventIKnowYouReCheater:FireServer(unpack(args))
+    end)
+
+    -- ドラッグ機能
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    Frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = Frame.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    Frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
+        end
+    end)
+else
+    warn("このスクリプトはこのゲームでのみ動作します。")
+end
