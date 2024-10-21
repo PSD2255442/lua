@@ -34,6 +34,36 @@ stopButton.Text = "停止"
 stopButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 stopButton.Parent = mainFrame
 
+-- ドラッグ機能の追加
+local dragToggle = nil
+local dragStart = nil
+local startPos = nil
+
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        dragToggle = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragToggle = false
+            end
+        end)
+    end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch and dragToggle then
+        updateInput(input)
+    end
+end)
+
 -- スタートボタンのクリックイベント
 startButton.MouseButton1Click:Connect(function()
     if not isRunning then
