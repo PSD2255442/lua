@@ -1,0 +1,218 @@
+-- LocalScript: StarterPlayer > StarterGui に配置
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+local zoomDistance = 10
+local thirdPerson = false
+
+-- GUIセットアップ
+local gui = Instance.new("ScreenGui")
+gui.Name = "MobileThirdPersonGui"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- GUI全体の枠（画面中央に配置）
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 380, 0, 280)  -- 幅380、高さ280
+mainFrame.Position = UDim2.new(0.5, -190, 0.5, -140)  -- 画面中央に配置
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = gui
+
+-- UICornerで丸みを追加
+local cornerMain = Instance.new("UICorner")
+cornerMain.CornerRadius = UDim.new(0, 20)  -- 角の丸み具合
+cornerMain.Parent = mainFrame
+
+-- 三人称切り替えボタン（サイズを少し大きくしました）
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 200, 0, 60)  -- 幅200、高さ60に変更
+toggleButton.Position = UDim2.new(0.5, -100, 0.3, -30)
+toggleButton.Text = "三人称視点 ON"
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 128, 255)
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.TextSize = 20
+toggleButton.Parent = mainFrame
+
+-- UICornerで丸みを追加
+local cornerToggleButton = Instance.new("UICorner")
+cornerToggleButton.CornerRadius = UDim.new(0, 12)  -- 角の丸み具合
+cornerToggleButton.Parent = toggleButton
+
+-- ズーム表示ラベル
+local zoomLabel = Instance.new("TextLabel")
+zoomLabel.Size = UDim2.new(0, 180, 0, 30)
+zoomLabel.Position = UDim2.new(0.5, -90, 0.4, -25)
+zoomLabel.Text = "ズーム: 10"
+zoomLabel.BackgroundTransparency = 1
+zoomLabel.TextColor3 = Color3.new(1, 1, 1)
+zoomLabel.Font = Enum.Font.SourceSans
+zoomLabel.TextSize = 18
+zoomLabel.Parent = mainFrame
+
+-- ズーム＋ボタン（サイズを少し大きくしました）
+local plusButton = Instance.new("TextButton")
+plusButton.Size = UDim2.new(0, 60, 0, 50)  -- 幅60、高さ50に変更
+plusButton.Position = UDim2.new(0.5, 50, 0.5, 0)
+plusButton.Text = "+"
+plusButton.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+plusButton.TextColor3 = Color3.new(1, 1, 1)
+plusButton.Font = Enum.Font.SourceSansBold
+plusButton.TextSize = 24
+plusButton.Parent = mainFrame
+
+-- UICornerで丸みを追加
+local cornerPlusButton = Instance.new("UICorner")
+cornerPlusButton.CornerRadius = UDim.new(0, 12)
+cornerPlusButton.Parent = plusButton
+
+-- ズーム−ボタン（サイズを少し大きくしました）
+local minusButton = Instance.new("TextButton")
+minusButton.Size = UDim2.new(0, 60, 0, 50)  -- 幅60、高さ50に変更
+minusButton.Position = UDim2.new(0.5, -120, 0.5, 0)
+minusButton.Text = "-"
+minusButton.BackgroundColor3 = Color3.fromRGB(200, 100, 100)
+minusButton.TextColor3 = Color3.new(1, 1, 1)
+minusButton.Font = Enum.Font.SourceSansBold
+minusButton.TextSize = 24
+minusButton.Parent = mainFrame
+
+-- UICornerで丸みを追加
+local cornerMinusButton = Instance.new("UICorner")
+cornerMinusButton.CornerRadius = UDim.new(0, 12)
+cornerMinusButton.Parent = minusButton
+
+-- 最小化ボタン（サイズを少し大きくしました）
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0, 60, 0, 50)  -- 幅60、高さ50に変更
+minimizeButton.Position = UDim2.new(1, -70, 0, 10)
+minimizeButton.Text = "-"
+minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.Font = Enum.Font.SourceSansBold
+minimizeButton.TextSize = 24
+minimizeButton.Parent = mainFrame
+
+-- UICornerで丸みを追加
+local cornerMinimizeButton = Instance.new("UICorner")
+cornerMinimizeButton.CornerRadius = UDim.new(0, 12)
+cornerMinimizeButton.Parent = minimizeButton
+
+-- 再表示ボタン（小さくして左下に配置）
+local restoreButton = Instance.new("TextButton")
+restoreButton.Size = UDim2.new(0, 100, 0, 40)  -- 幅100、高さ40に変更
+restoreButton.Position = UDim2.new(0, 10, 1, -50)  -- 左下に配置
+restoreButton.Text = "GUI再表示"
+restoreButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+restoreButton.TextColor3 = Color3.new(1, 1, 1)
+restoreButton.Font = Enum.Font.SourceSansBold
+restoreButton.TextSize = 16
+restoreButton.Visible = false  -- 最初は非表示
+restoreButton.Parent = gui
+
+-- UICornerで丸みを追加
+local cornerRestoreButton = Instance.new("UICorner")
+cornerRestoreButton.CornerRadius = UDim.new(0, 12)
+cornerRestoreButton.Parent = restoreButton
+
+-- GUIを最小化／復元する関数
+local function toggleMinimized()
+    if mainFrame.Visible then
+        mainFrame.Visible = false
+        restoreButton.Visible = true  -- 再表示ボタンを表示
+    else
+        mainFrame.Visible = true
+        restoreButton.Visible = false  -- 再表示ボタンを非表示
+    end
+end
+
+-- 再表示ボタンをクリックした際にGUIを復元
+restoreButton.MouseButton1Click:Connect(function()
+    toggleMinimized()  -- GUIを再表示
+end)
+
+-- 三人称切り替え関数
+local function setThirdPerson(enable)
+	thirdPerson = enable
+	if enable then
+		player.CameraMode = Enum.CameraMode.Classic
+		player.CameraMaxZoomDistance = zoomDistance
+		player.CameraMinZoomDistance = 5
+		camera.CameraType = Enum.CameraType.Custom
+		toggleButton.Text = "一人称視点 ON"
+	else
+		player.CameraMode = Enum.CameraMode.LockFirstPerson
+		toggleButton.Text = "三人称視点 ON"
+	end
+end
+
+-- ズーム更新関数
+local function updateZoomDisplay()
+	zoomLabel.Text = "ズーム: " .. tostring(zoomDistance)
+	player.CameraMaxZoomDistance = zoomDistance
+end
+
+-- ボタンイベント
+toggleButton.MouseButton1Click:Connect(function()
+	setThirdPerson(not thirdPerson)
+end)
+
+plusButton.MouseButton1Click:Connect(function()
+	if zoomDistance < 100 then
+		zoomDistance += 5
+		updateZoomDisplay()
+	end
+end)
+
+minusButton.MouseButton1Click:Connect(function()
+	if zoomDistance > 10 then
+		zoomDistance -= 5
+		updateZoomDisplay()
+	end
+end)
+
+-- 最小化ボタンイベント
+minimizeButton.MouseButton1Click:Connect(function()
+	toggleMinimized()
+end)
+
+-- 再表示ボタンをドラッグ可能にする
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+-- ドラッグ開始
+restoreButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = restoreButton.Position
+    end
+end)
+
+-- ドラッグ中
+restoreButton.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        restoreButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- ドラッグ終了
+restoreButton.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+-- キャラクター生成時、三人称視点ON
+player.CharacterAdded:Connect(function()
+	wait(1)
+	setThirdPerson(true)
+	updateZoomDisplay()
+end)
