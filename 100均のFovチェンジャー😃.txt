@@ -1,0 +1,182 @@
+local player = game.Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+-- FOV設定
+local minFOV, maxFOV, defaultFOV = 40, 100, 70
+
+-- GUI作成
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FOVSliderGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- メインフレーム
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 320, 0, 120)
+frame.Position = UDim2.new(0.5, -160, 1, -140)
+frame.BackgroundTransparency = 1
+frame.BorderSizePixel = 0
+frame.ZIndex = 1
+frame.Parent = screenGui
+
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+-- 背景とグラデーション
+local frameBackground = Instance.new("ImageLabel")
+frameBackground.Size = UDim2.new(1, 0, 1, 0)
+frameBackground.BackgroundTransparency = 1
+frameBackground.Image = ""
+frameBackground.ZIndex = 0
+frameBackground.Parent = frame
+
+local gradient = Instance.new("UIGradient")
+gradient.Rotation = 90
+gradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 220, 220)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 220, 255))
+}
+gradient.Parent = frameBackground
+
+-- シャドウ
+local shadow = Instance.new("ImageLabel")
+shadow.Image = "rbxassetid://1316045217"
+shadow.Size = UDim2.new(1, 20, 1, 20)
+shadow.Position = UDim2.new(0, -10, 0, -10)
+shadow.BackgroundTransparency = 1
+shadow.ImageColor3 = Color3.new(0, 0, 0)
+shadow.ImageTransparency = 0.7
+shadow.ZIndex = 0
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10, 10, 118, 118)
+shadow.Parent = frame
+
+-- タイトル
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -20, 0, 20)
+titleLabel.Position = UDim2.new(0, 10, 0, -24)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "100均のFovチェンジャー😃"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextScaled = true
+titleLabel.ZIndex = 2
+titleLabel.Parent = frame
+
+-- 現在のFOV表示
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(0.5, 0, 0, 20)
+label.Position = UDim2.new(0, 10, 0, 10)
+label.BackgroundTransparency = 1
+label.TextColor3 = Color3.new(1, 1, 1)
+label.TextScaled = true
+label.Font = Enum.Font.SourceSansBold
+label.Text = "FOV: " .. (defaultFOV - 70)
+label.ZIndex = 2
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.Parent = frame
+
+-- 最小化ボタン
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0, 24, 0, 24)
+minimizeButton.Position = UDim2.new(1, -28, 0, 4)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+minimizeButton.Text = "×"
+minimizeButton.Font = Enum.Font.SourceSansBold
+minimizeButton.TextColor3 = Color3.new(1, 1, 1)
+minimizeButton.TextScaled = true
+minimizeButton.ZIndex = 2
+minimizeButton.Parent = frame
+Instance.new("UICorner", minimizeButton).CornerRadius = UDim.new(0, 6)
+
+-- リセットボタン
+local resetButton = Instance.new("TextButton")
+resetButton.Size = UDim2.new(0, 110, 0, 26)
+resetButton.Position = UDim2.new(1, -140, 0, 45)
+resetButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+resetButton.Text = "視野角を戻す"
+resetButton.Font = Enum.Font.SourceSans
+resetButton.TextColor3 = Color3.new(1, 1, 1)
+resetButton.TextScaled = true
+resetButton.ZIndex = 2
+resetButton.Parent = frame
+Instance.new("UICorner", resetButton).CornerRadius = UDim.new(0, 6)
+
+-- スライダー
+local sliderBar = Instance.new("Frame")
+sliderBar.Size = UDim2.new(1, -40, 0, 10)
+sliderBar.Position = UDim2.new(0, 20, 1, -30)
+sliderBar.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+sliderBar.BorderSizePixel = 0
+sliderBar.ZIndex = 2
+sliderBar.Parent = frame
+
+local sliderHandle = Instance.new("Frame")
+sliderHandle.Size = UDim2.new(0, 20, 0, 36)
+sliderHandle.Position = UDim2.new((defaultFOV - minFOV)/(maxFOV - minFOV), -10, 0.5, -18)
+sliderHandle.AnchorPoint = Vector2.new(0.5, 0.5)
+sliderHandle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+sliderHandle.BorderSizePixel = 0
+sliderHandle.ZIndex = 3
+sliderHandle.Parent = sliderBar
+Instance.new("UICorner", sliderHandle).CornerRadius = UDim.new(0, 6)
+
+-- 再表示ボタン（画面中央上部）
+local reopenButton = Instance.new("TextButton")
+reopenButton.Size = UDim2.new(0, 40, 0, 40)
+reopenButton.Position = UDim2.new(0.5, -20, 0, 10) -- 中央上に固定
+reopenButton.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+reopenButton.Text = "+"
+reopenButton.Font = Enum.Font.SourceSansBold
+reopenButton.TextColor3 = Color3.new(1, 1, 1)
+reopenButton.TextScaled = true
+reopenButton.Visible = false
+reopenButton.ZIndex = 2
+reopenButton.Parent = screenGui
+Instance.new("UICorner", reopenButton).CornerRadius = UDim.new(1, 0)
+
+-- スライダー操作
+local dragging = false
+
+sliderHandle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = false
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if dragging then
+		local mousePos = UIS:GetMouseLocation().X
+		local barPos = sliderBar.AbsolutePosition.X
+		local barSize = sliderBar.AbsoluteSize.X
+		local newPos = math.clamp((mousePos - barPos) / barSize, 0, 1)
+		sliderHandle.Position = UDim2.new(newPos, -10, 0.5, -18)
+		local newFOV = math.floor(minFOV + (maxFOV - minFOV) * newPos)
+		camera.FieldOfView = newFOV
+		label.Text = "FOV: " .. (newFOV - 70)
+	end
+end)
+
+resetButton.MouseButton1Click:Connect(function()
+	camera.FieldOfView = defaultFOV
+	local newPos = (defaultFOV - minFOV)/(maxFOV - minFOV)
+	sliderHandle.Position = UDim2.new(newPos, -10, 0.5, -18)
+	label.Text = "FOV: " .. (defaultFOV - 70)
+end)
+
+minimizeButton.MouseButton1Click:Connect(function()
+	frame.Visible = false
+	reopenButton.Visible = true
+end)
+
+reopenButton.MouseButton1Click:Connect(function()
+	frame.Visible = true
+	reopenButton.Visible = false
+end)
